@@ -1,0 +1,12 @@
+C:\Users\hritc\rust\lab09\target\debug\deps\anstyle-fff775a29d8521d1.rmeta: C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.4\src\lib.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.4\src\macros.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.4\src\color.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.4\src\effect.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.4\src\reset.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.4\src\style.rs
+
+C:\Users\hritc\rust\lab09\target\debug\deps\libanstyle-fff775a29d8521d1.rlib: C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.4\src\lib.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.4\src\macros.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.4\src\color.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.4\src\effect.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.4\src\reset.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.4\src\style.rs
+
+C:\Users\hritc\rust\lab09\target\debug\deps\anstyle-fff775a29d8521d1.d: C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.4\src\lib.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.4\src\macros.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.4\src\color.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.4\src\effect.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.4\src\reset.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.4\src\style.rs
+
+C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.4\src\lib.rs:
+C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.4\src\macros.rs:
+C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.4\src\color.rs:
+C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.4\src\effect.rs:
+C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.4\src\reset.rs:
+C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.4\src\style.rs:
