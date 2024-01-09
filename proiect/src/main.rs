@@ -1,0 +1,163 @@
+use std::fs;
+use std::io;
+use std::io::{ErrorKind, Write};
+use std::path::Path;
+
+fn copiere_director(cale_sursa: &str, cale_destinatie: &str) -> io::Result<()> {
+    if cale_sursa == cale_destinatie {
+        eprintln!(
+            "cp: cannot copy a directory, '{}' , into itself, '{}",
+            cale_sursa, cale_destinatie
+        );
+        return Err(io::Error::new(ErrorKind::Other, "They are the same"));
+    }
+    if let Ok(sursa_metadata) = fs::metadata(cale_sursa) {
+        if !sursa_metadata.is_dir() {
+            eprintln!(
+                "cp: cannot stat '{}': No such file or directory",
+                cale_sursa
+            );
+            return Err(io::Error::new(ErrorKind::Other, "Not directory"));
+        }
+    } else {
+        return Err(io::Error::new(
+            ErrorKind::NotFound,
+            "Source directory does not exist",
+        ));
+    }
+
+    let cale_sursa1 = Path::new(cale_sursa);
+    let cale_destinatie1 = Path::new(cale_destinatie);
+
+    let destinatie_director = if cale_destinatie1.is_dir() {
+        cale_destinatie1.join(cale_sursa1.file_name().unwrap())
+    } else {
+        fs::create_dir(cale_destinatie1)?;
+
+        cale_destinatie1.to_path_buf()
+    };
+
+    if !destinatie_director.exists() {
+        fs::create_dir(&destinatie_director)?;
+    }
+
+    if cale_sursa1.is_dir() {
+        for entry in fs::read_dir(cale_sursa1)? {
+            let entry = entry?;
+            let entry_path = entry.path();
+            println!("{}", entry_path.to_string_lossy());
+            if entry_path.is_dir() {
+                println!("{}", destinatie_director.to_string_lossy());
+                copiere_director(
+                    &entry_path.to_string_lossy(),
+                    &destinatie_director.to_string_lossy(),
+                )?;
+            } else {
+                println!("pula");
+                let destinatie_fisier = destinatie_director.join(entry_path.file_name().unwrap());
+                println!("{}", destinatie_fisier.to_string_lossy());
+
+                let _ = copiere_fisier(
+                    &entry_path.to_string_lossy(),
+                    &destinatie_fisier.to_string_lossy(),
+                );
+            }
+        }
+    }
+
+    Ok(())
+}
+
+fn copiere_fisier(cale_sursa: &str, cale_destinatie: &str) -> io::Result<()> {
+    #[cfg(windows)]
+    let path_separator = '\\';
+    if cale_sursa == cale_destinatie {
+        eprintln!(
+            "cp: '{}' and '{}' are the same file",
+            cale_sursa, cale_destinatie
+        );
+        return Err(io::Error::new(ErrorKind::Other, "They are the same"));
+    }
+    if let (Ok(sursa_metadata), Ok(destinatie_metadata)) =
+        (fs::metadata(cale_sursa), fs::metadata(cale_destinatie))
+    {
+        if sursa_metadata.is_dir() && destinatie_metadata.is_dir() {
+            eprintln!("cp: option -r was not specified. This command only works to copy a directory tree as a regular file.");
+            return Err(io::Error::new(
+                ErrorKind::Other,
+                "Option -r was not specified",
+            ));
+        }
+    }
+
+    let mut modified_destinatie = cale_destinatie.to_string();
+
+    if let Ok(destinatie_metadata) = fs::metadata(cale_destinatie) {
+        if destinatie_metadata.is_dir() {
+            let cale_sursa_split: Vec<&str> = cale_sursa.split(path_separator).collect();
+            if let Some(cale_sursa_last) = cale_sursa_split.last() {
+                modified_destinatie.push(path_separator);
+                modified_destinatie.push_str(cale_sursa_last);
+            }
+        }
+    }
+
+    let sursa_contents = match fs::read(&cale_sursa) {
+        Ok(contents) => contents,
+        Err(e) => {
+            match e.kind() {
+                ErrorKind::NotFound => eprintln!(
+                    "cp: cannot stat '{}': No such file or directory",
+                    cale_sursa
+                ),
+                ErrorKind::PermissionDenied => eprintln!(
+                    "cp: cannot read '{}' for copying: Permission denied",
+                    cale_sursa
+                ),
+                _ => eprintln!("cp: {}", e),
+            }
+            return Err(e);
+        }
+    };
+    match fs::write(&modified_destinatie, &sursa_contents) {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            match e.kind() {
+                ErrorKind::NotFound => eprintln!(
+                    "cp: cannot stat '{}': No such file or directory",
+                    cale_destinatie
+                ),
+                ErrorKind::PermissionDenied => eprintln!(
+                    "cp: cannot read '{}' for copying: Permission denied",
+                    cale_destinatie
+                ),
+                _ => eprintln!("cp: {}", e),
+            }
+            Err(e)
+        }
+    }
+}
+
+fn main() {
+    loop {
+        print!("> ");
+        io::stdout().flush().expect("Failed to flush stdout");
+        let mut input = String::new();
+        io::stdin()
+            .read_line(&mut input)
+            .expect("Eroare la citirea liniei");
+        let argument: Vec<&str> = input.split_whitespace().collect();
+        match argument[0] {
+            "cp" => {
+                if argument.len() == 3 {
+                    let _ = copiere_fisier(argument[1], argument[2]);
+                } else if argument.len() == 4 && argument[1] == "-r" {
+                    let _ = copiere_director(argument[2], argument[3]);
+                }
+            }
+            _ => {
+                println!("Command not recognized");
+            }
+        }
+    }
+}
