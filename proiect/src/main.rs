@@ -47,15 +47,12 @@ fn copiere_director(cale_sursa: &str, cale_destinatie: &str) -> io::Result<()> {
             let entry_path = entry.path();
             println!("{}", entry_path.to_string_lossy());
             if entry_path.is_dir() {
-                println!("{}", destinatie_director.to_string_lossy());
                 copiere_director(
                     &entry_path.to_string_lossy(),
                     &destinatie_director.to_string_lossy(),
                 )?;
             } else {
-                println!("pula");
                 let destinatie_fisier = destinatie_director.join(entry_path.file_name().unwrap());
-                println!("{}", destinatie_fisier.to_string_lossy());
 
                 let _ = copiere_fisier(
                     &entry_path.to_string_lossy(),
@@ -177,6 +174,40 @@ fn stergere_director(directoare: &[&str]) -> io::Result<()> {
 
     Ok(())
 }
+fn mutare(fisiere: &[&str]) -> io::Result<()> {
+    let destinatie = fisiere.last().unwrap();
+
+    for fisier in fisiere.iter().take(fisiere.len() - 1) {
+        match fs::metadata(fisier) {
+            Ok(metadata) => {
+                if metadata.is_dir() {
+                    println!("da");
+
+                    let _ = copiere_director(fisier, destinatie);
+                    let _ = stergere_director(&[fisier]);
+                } else if metadata.is_file() {
+                    println!("Nu");
+
+                    let _ = copiere_fisier(fisier, &destinatie)?;
+                    fs::remove_file(fisier)?;
+                } 
+            }
+             Err(e) => match e.kind() {
+                ErrorKind::NotFound => eprintln!(
+                    "mv: cannot move '{}': No such file or directory",
+                    fisier
+                ),
+                ErrorKind::PermissionDenied => eprintln!(
+                    "mv: cannot read '{}' for moving: Permission denied",
+                    fisier
+                ),
+                _ => eprintln!("Failed to delete file '{}': {}", fisier, e),
+            }
+        }
+    }
+
+    Ok(())
+}
 fn main() {
     loop {
         print!("> ");
@@ -199,6 +230,13 @@ fn main() {
                     let _ = stergere_fisier(&&argument[1..]);
                 } else if argument.len() > 1 && argument[1] == "-r" {
                     let _ = stergere_director(&&argument[2..]);
+                }
+            }
+            "mv" =>
+            {
+                if argument.len()>2
+                {
+                let _ =mutare(&&argument[1..]);
                 }
             }
             _ => {
