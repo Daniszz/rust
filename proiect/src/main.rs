@@ -265,6 +265,66 @@ fn creare_key(input: &str) -> io::Result<()> {
 
     Ok(())
 }
+fn modificare_key(input: &str, nume: &str, data: &str) -> io::Result<()> {
+   
+    let (predef, subkey) = input.split_once('\\').unwrap_or((input, ""));
+
+    let hkey = match predef.to_uppercase().as_str() {
+        "HKCR" | "HKEY_CLASSES_ROOT" => HKEY_CLASSES_ROOT,
+        "HKCU" | "HKEY_CURRENT_USER" => HKEY_CURRENT_USER,
+        "HKLM" | "HKEY_LOCAL_MACHINE" => HKEY_LOCAL_MACHINE,
+        "HKU" | "HKEY_USERS" => HKEY_USERS,
+        "HKCC" | "HKEY_CURRENT_CONFIG" => HKEY_CURRENT_CONFIG,
+        "HKPD" | "HKEY_PERFORMANCE_DATA" => HKEY_PERFORMANCE_DATA,
+        "HKPT" | "HKEY_PERFORMANCE_TEXT" => HKEY_PERFORMANCE_TEXT,
+        "HKPN" | "HKEY_PERFORMANCE_NLSTEXT" => HKEY_PERFORMANCE_NLSTEXT,
+        _ => {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidInput,
+                format!("Invalid predefined key: {}", predef),
+            ));
+        }
+    };
+
+    let key = RegKey::predef(hkey);
+    let path = Path::new(subkey);
+    let (key, disp) = key.create_subkey(&path)?;
+
+    match disp {
+        REG_CREATED_NEW_KEY => println!("A new key has been created"),
+        REG_OPENED_EXISTING_KEY => println!("An existing key has been opened"),
+    }
+
+    key.set_value(nume, &data)?;
+
+
+    println!("Registry value added successfully.");
+
+    Ok(())
+}
+fn stergere_key(input: &str) -> io::Result<()> {
+    println!("Da");
+    let (predef, subkey) = input.split_once('\\').unwrap_or((input, ""));
+
+    let hkey = match predef.to_uppercase().as_str() {
+        "HKEY_CLASSES_ROOT" => HKEY_CLASSES_ROOT,
+        "HKEY_CURRENT_USER" => HKEY_CURRENT_USER,
+        "HKEY_LOCAL_MACHINE" => HKEY_LOCAL_MACHINE,
+        "HKEY_USERS" => HKEY_USERS,
+        "HKEY_CURRENT_CONFIG" => HKEY_CURRENT_CONFIG,
+        "HKEY_PERFORMANCE_DATA" => HKEY_PERFORMANCE_DATA,
+        "HKEY_PERFORMANCE_TEXT" => HKEY_PERFORMANCE_TEXT,
+        "HKEY_PERFORMANCE_NLSTEXT" => HKEY_PERFORMANCE_NLSTEXT,
+        _ => {
+            return Err(io::Error::new(io::ErrorKind::InvalidInput, format!("Invalid predefined key: {}", predef)));
+        }
+    };
+
+    let _key = winreg::RegKey::predef(hkey).delete_subkey(subkey)?;
+    println!("Key '{}' deleted successfully.", input);
+
+    Ok(())
+}
 fn main() {
     loop {
         print!("> ");
@@ -305,6 +365,14 @@ fn main() {
                 if argument[1]=="add" && argument.len()==3
                 {
                     let _ =creare_key(argument[2]);
+                }
+                if argument[1]=="add" && argument[3]=="/v" && argument[5]=="/d"
+                {
+                    let _ =modificare_key(argument[2],argument[4],argument[6]);
+                } 
+                if argument[1]=="delete" && argument.len()==3
+                {
+                    let _ =stergere_key(argument[2]);
                 }
             }
             _ => {
