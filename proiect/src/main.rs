@@ -138,6 +138,45 @@ fn copiere_fisier(cale_sursa: &str, cale_destinatie: &str) -> io::Result<()> {
     }
 }
 
+fn stergere_fisier(director: &[&str]) -> io::Result<()> {
+    for &fisier in director {
+        match fs::remove_file(fisier) {
+            Ok(_) => (),
+            Err(e) => match e.kind() {
+                ErrorKind::NotFound => {
+                    eprintln!("rm: cannot remove '{}': No such file or directory", fisier)
+                }
+                ErrorKind::PermissionDenied => eprintln!(
+                    "cp: cannot read '{}' for copying: Permission denied",
+                    fisier
+                ),
+                _ => eprintln!("Failed to delete file '{}': {}", fisier, e),
+            },
+        }
+    }
+
+    Ok(())
+}
+fn stergere_director(directoare: &[&str]) -> io::Result<()> {
+    for &director in directoare {
+        match fs::remove_dir_all(director) {
+            Ok(_) => (),
+            Err(e) => match e.kind() {
+                ErrorKind::NotFound => eprintln!(
+                    "rm: cannot remove '{}': No such file or directory",
+                    director
+                ),
+                ErrorKind::PermissionDenied => eprintln!(
+                    "cp: cannot read '{}' for copying: Permission denied",
+                    director
+                ),
+                _ => eprintln!("Failed to delete file '{}': {}", director, e),
+            },
+        }
+    }
+
+    Ok(())
+}
 fn main() {
     loop {
         print!("> ");
@@ -153,6 +192,13 @@ fn main() {
                     let _ = copiere_fisier(argument[1], argument[2]);
                 } else if argument.len() == 4 && argument[1] == "-r" {
                     let _ = copiere_director(argument[2], argument[3]);
+                }
+            }
+            "rm" => {
+                if argument.len() > 1 && argument[1] != "-r" {
+                    let _ = stergere_fisier(&&argument[1..]);
+                } else if argument.len() > 1 && argument[1] == "-r" {
+                    let _ = stergere_director(&&argument[2..]);
                 }
             }
             _ => {
