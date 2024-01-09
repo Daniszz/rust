@@ -2,6 +2,7 @@ use std::fs;
 use std::io;
 use std::io::{ErrorKind, Write};
 use std::path::Path;
+use std::process::Command;
 use winreg::enums::*;
 use winreg::RegKey;
 
@@ -325,6 +326,20 @@ fn stergere_key(input: &str) -> io::Result<()> {
 
     Ok(())
 }
+fn listare_procese()
+{
+    let iesire=Command::new("tasklist").output().expect("Eroare la executie");
+    if iesire.status.success()
+    {
+        let text=String::from_utf8_lossy(&iesire.stdout);
+        println!("{}",text);
+    }
+    else {
+        eprintln!("Error listing processes");
+
+    }
+    
+}
 fn main() {
     loop {
         print!("> ");
@@ -361,20 +376,31 @@ fn main() {
                 if argument[1]=="query" && argument.len()==3
                 {
                     let _ =listare_key(argument[2]);
-                }
+                } else
                 if argument[1]=="add" && argument.len()==3
                 {
                     let _ =creare_key(argument[2]);
-                }
+                } else
                 if argument[1]=="add" && argument[3]=="/v" && argument[5]=="/d"
                 {
                     let _ =modificare_key(argument[2],argument[4],argument[6]);
-                } 
+                } else
                 if argument[1]=="delete" && argument.len()==3
                 {
                     let _ =stergere_key(argument[2]);
                 }
+                else {
+                    println!("Command not recognized");
+
+                }
             }
+            "ps" =>
+            {
+                if argument.len()==1
+                {
+                    listare_procese();
+                }
+            } 
             _ => {
                 println!("Command not recognized");
             }
