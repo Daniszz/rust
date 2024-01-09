@@ -1,0 +1,11 @@
+C:\Users\hritc\OneDrive\Documents\GitHub\rust\proiect\target\debug\deps\winreg-840d18982f9d0a4e.rmeta: C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winreg-0.52.0\src\lib.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winreg-0.52.0\src\common.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winreg-0.52.0\src\enums.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winreg-0.52.0\src\reg_key.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winreg-0.52.0\src\reg_key_metadata.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winreg-0.52.0\src\reg_value.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winreg-0.52.0\src\types.rs
+
+C:\Users\hritc\OneDrive\Documents\GitHub\rust\proiect\target\debug\deps\winreg-840d18982f9d0a4e.d: C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winreg-0.52.0\src\lib.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winreg-0.52.0\src\common.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winreg-0.52.0\src\enums.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winreg-0.52.0\src\reg_key.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winreg-0.52.0\src\reg_key_metadata.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winreg-0.52.0\src\reg_value.rs C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winreg-0.52.0\src\types.rs
+
+C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winreg-0.52.0\src\lib.rs:
+C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winreg-0.52.0\src\common.rs:
+C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winreg-0.52.0\src\enums.rs:
+C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winreg-0.52.0\src\reg_key.rs:
+C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winreg-0.52.0\src\reg_key_metadata.rs:
+C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winreg-0.52.0\src\reg_value.rs:
+C:\Users\hritc\.cargo\registry\src\index.crates.io-6f17d22bba15001f\winreg-0.52.0\src\types.rs:

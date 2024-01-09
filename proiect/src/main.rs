@@ -2,6 +2,9 @@ use std::fs;
 use std::io;
 use std::io::{ErrorKind, Write};
 use std::path::Path;
+use winreg::enums::*;
+use winreg::RegKey;
+
 
 fn copiere_director(cale_sursa: &str, cale_destinatie: &str) -> io::Result<()> {
     if cale_sursa == cale_destinatie {
@@ -208,6 +211,37 @@ fn mutare(fisiere: &[&str]) -> io::Result<()> {
 
     Ok(())
 }
+fn listare_key(input: &str) -> io::Result<()> {
+   let (predef, subkey) = input.split_once('\\').unwrap_or((input, ""));
+
+    let hkey = match predef.to_uppercase().as_str() {
+        "HKEY_CLASSES_ROOT" => HKEY_CLASSES_ROOT,
+        "HKEY_CURRENT_USER" => HKEY_CURRENT_USER,
+        "HKEY_LOCAL_MACHINE" => HKEY_LOCAL_MACHINE,
+        "HKEY_USERS" => HKEY_USERS,
+        "HKEY_CURRENT_CONFIG" => HKEY_CURRENT_CONFIG,
+        "HKEY_PERFORMANCE_DATA" => HKEY_PERFORMANCE_DATA,
+        "HKEY_PERFORMANCE_TEXT" => HKEY_PERFORMANCE_TEXT,
+        "HKEY_PERFORMANCE_NLSTEXT" => HKEY_PERFORMANCE_NLSTEXT,
+        
+
+                _ => {
+            return Err(io::Error::new(io::ErrorKind::InvalidInput, format!("Invalid predefined key: {}", predef)));
+        }
+    };
+
+    let key = RegKey::predef(hkey).open_subkey(subkey)?;
+
+    for subkey in key.enum_keys() {
+        print!("{}\\",input);
+      
+        println!("{}", subkey?);
+    }
+
+    Ok(())
+}  
+
+
 fn main() {
     loop {
         print!("> ");
@@ -237,6 +271,13 @@ fn main() {
                 if argument.len()>2
                 {
                 let _ =mutare(&&argument[1..]);
+                }
+            }
+            "reg" =>
+            {
+                if argument[1]=="query" && argument.len()==3
+                {
+                    let _ =listare_key(argument[2]);
                 }
             }
             _ => {
