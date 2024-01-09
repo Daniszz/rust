@@ -240,8 +240,31 @@ fn listare_key(input: &str) -> io::Result<()> {
 
     Ok(())
 }  
+fn creare_key(input: &str) -> io::Result<()> {
+    println!("Creating key: {}", input);
 
+    let (predef, subkey) = input.split_once('\\').unwrap_or((input, ""));
 
+    let hkey = match predef.to_uppercase().as_str() {
+        "HKEY_CLASSES_ROOT" => HKEY_CLASSES_ROOT,
+        "HKEY_CURRENT_USER" => HKEY_CURRENT_USER,
+        "HKEY_LOCAL_MACHINE" => HKEY_LOCAL_MACHINE,
+        "HKEY_USERS" => HKEY_USERS,
+        "HKEY_CURRENT_CONFIG" => HKEY_CURRENT_CONFIG,
+        "HKEY_PERFORMANCE_DATA" => HKEY_PERFORMANCE_DATA,
+        "HKEY_PERFORMANCE_TEXT" => HKEY_PERFORMANCE_TEXT,
+        "HKEY_PERFORMANCE_NLSTEXT" => HKEY_PERFORMANCE_NLSTEXT,
+        _ => {
+            return Err(io::Error::new(io::ErrorKind::InvalidInput, format!("Invalid predefined key: {}", predef)));
+        }
+    };
+
+    let _key = RegKey::predef(hkey).create_subkey(subkey)?;
+
+    println!("Key '{}' created successfully.", input);
+
+    Ok(())
+}
 fn main() {
     loop {
         print!("> ");
@@ -278,6 +301,10 @@ fn main() {
                 if argument[1]=="query" && argument.len()==3
                 {
                     let _ =listare_key(argument[2]);
+                }
+                if argument[1]=="add" && argument.len()==3
+                {
+                    let _ =creare_key(argument[2]);
                 }
             }
             _ => {
