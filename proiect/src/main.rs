@@ -6,7 +6,6 @@ use std::process::Command;
 use winreg::enums::*;
 use winreg::RegKey;
 
-
 fn copiere_director(cale_sursa: &str, cale_destinatie: &str) -> io::Result<()> {
     if cale_sursa == cale_destinatie {
         eprintln!(
@@ -194,26 +193,24 @@ fn mutare(fisiere: &[&str]) -> io::Result<()> {
 
                     let _ = copiere_fisier(fisier, &destinatie)?;
                     fs::remove_file(fisier)?;
-                } 
+                }
             }
-             Err(e) => match e.kind() {
-                ErrorKind::NotFound => eprintln!(
-                    "mv: cannot move '{}': No such file or directory",
-                    fisier
-                ),
-                ErrorKind::PermissionDenied => eprintln!(
-                    "mv: cannot read '{}' for moving: Permission denied",
-                    fisier
-                ),
+            Err(e) => match e.kind() {
+                ErrorKind::NotFound => {
+                    eprintln!("mv: cannot move '{}': No such file or directory", fisier)
+                }
+                ErrorKind::PermissionDenied => {
+                    eprintln!("mv: cannot read '{}' for moving: Permission denied", fisier)
+                }
                 _ => eprintln!("Failed to delete file '{}': {}", fisier, e),
-            }
+            },
         }
     }
 
     Ok(())
 }
 fn listare_key(input: &str) -> io::Result<()> {
-   let (predef, subkey) = input.split_once('\\').unwrap_or((input, ""));
+    let (predef, subkey) = input.split_once('\\').unwrap_or((input, ""));
 
     let hkey = match predef.to_uppercase().as_str() {
         "HKEY_CLASSES_ROOT" => HKEY_CLASSES_ROOT,
@@ -224,23 +221,25 @@ fn listare_key(input: &str) -> io::Result<()> {
         "HKEY_PERFORMANCE_DATA" => HKEY_PERFORMANCE_DATA,
         "HKEY_PERFORMANCE_TEXT" => HKEY_PERFORMANCE_TEXT,
         "HKEY_PERFORMANCE_NLSTEXT" => HKEY_PERFORMANCE_NLSTEXT,
-        
 
-                _ => {
-            return Err(io::Error::new(io::ErrorKind::InvalidInput, format!("Invalid predefined key: {}", predef)));
+        _ => {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidInput,
+                format!("Invalid predefined key: {}", predef),
+            ));
         }
     };
 
     let key = RegKey::predef(hkey).open_subkey(subkey)?;
 
     for subkey in key.enum_keys() {
-        print!("{}\\",input);
-      
+        print!("{}\\", input);
+
         println!("{}", subkey?);
     }
 
     Ok(())
-}  
+}
 fn creare_key(input: &str) -> io::Result<()> {
     println!("Creating key: {}", input);
 
@@ -256,7 +255,10 @@ fn creare_key(input: &str) -> io::Result<()> {
         "HKEY_PERFORMANCE_TEXT" => HKEY_PERFORMANCE_TEXT,
         "HKEY_PERFORMANCE_NLSTEXT" => HKEY_PERFORMANCE_NLSTEXT,
         _ => {
-            return Err(io::Error::new(io::ErrorKind::InvalidInput, format!("Invalid predefined key: {}", predef)));
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidInput,
+                format!("Invalid predefined key: {}", predef),
+            ));
         }
     };
 
@@ -267,7 +269,6 @@ fn creare_key(input: &str) -> io::Result<()> {
     Ok(())
 }
 fn modificare_key(input: &str, nume: &str, data: &str) -> io::Result<()> {
-   
     let (predef, subkey) = input.split_once('\\').unwrap_or((input, ""));
 
     let hkey = match predef.to_uppercase().as_str() {
@@ -298,7 +299,6 @@ fn modificare_key(input: &str, nume: &str, data: &str) -> io::Result<()> {
 
     key.set_value(nume, &data)?;
 
-
     println!("Registry value added successfully.");
 
     Ok(())
@@ -317,7 +317,10 @@ fn stergere_key(input: &str) -> io::Result<()> {
         "HKEY_PERFORMANCE_TEXT" => HKEY_PERFORMANCE_TEXT,
         "HKEY_PERFORMANCE_NLSTEXT" => HKEY_PERFORMANCE_NLSTEXT,
         _ => {
-            return Err(io::Error::new(io::ErrorKind::InvalidInput, format!("Invalid predefined key: {}", predef)));
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidInput,
+                format!("Invalid predefined key: {}", predef),
+            ));
         }
     };
 
@@ -326,19 +329,27 @@ fn stergere_key(input: &str) -> io::Result<()> {
 
     Ok(())
 }
-fn listare_procese()
-{
-    let iesire=Command::new("tasklist").output().expect("Eroare la executie");
-    if iesire.status.success()
-    {
-        let text=String::from_utf8_lossy(&iesire.stdout);
-        println!("{}",text);
-    }
-    else {
+fn listare_procese() {
+    let iesire = Command::new("tasklist")
+        .output()
+        .expect("Eroare la executie");
+    if iesire.status.success() {
+        let text = String::from_utf8_lossy(&iesire.stdout);
+        println!("{}", text);
+    } else {
         eprintln!("Error listing processes");
-
     }
-    
+}
+fn kill_proces(proces: &str) {
+    let iesire = Command::new("taskkill")
+        .args(&["/F", "/IM", proces])
+        .output()
+        .expect("Failed to execute taskkill command");
+    if iesire.status.success() {
+        println!("Successfully killed processes with name '{}'", proces);
+    } else {
+        eprintln!("Error killing processes with name '{}'", proces);
+    }
 }
 fn main() {
     loop {
@@ -364,43 +375,35 @@ fn main() {
                     let _ = stergere_director(&&argument[2..]);
                 }
             }
-            "mv" =>
-            {
-                if argument.len()>2
-                {
-                let _ =mutare(&&argument[1..]);
+            "mv" => {
+                if argument.len() > 2 {
+                    let _ = mutare(&&argument[1..]);
                 }
             }
-            "reg" =>
-            {
-                if argument[1]=="query" && argument.len()==3
-                {
-                    let _ =listare_key(argument[2]);
-                } else
-                if argument[1]=="add" && argument.len()==3
-                {
-                    let _ =creare_key(argument[2]);
-                } else
-                if argument[1]=="add" && argument[3]=="/v" && argument[5]=="/d"
-                {
-                    let _ =modificare_key(argument[2],argument[4],argument[6]);
-                } else
-                if argument[1]=="delete" && argument.len()==3
-                {
-                    let _ =stergere_key(argument[2]);
-                }
-                else {
+            "reg" => {
+                if argument[1] == "query" && argument.len() == 3 {
+                    let _ = listare_key(argument[2]);
+                } else if argument[1] == "add" && argument.len() == 3 {
+                    let _ = creare_key(argument[2]);
+                } else if argument[1] == "add" && argument[3] == "/v" && argument[5] == "/d" {
+                    let _ = modificare_key(argument[2], argument[4], argument[6]);
+                } else if argument[1] == "delete" && argument.len() == 3 {
+                    let _ = stergere_key(argument[2]);
+                } else {
                     println!("Command not recognized");
-
                 }
             }
-            "ps" =>
-            {
-                if argument.len()==1
-                {
+            "ps" => {
+                if argument.len() == 1 {
                     listare_procese();
                 }
-            } 
+            }
+            "pkill" => {
+                if argument[1] == "-f" && argument.len() == 3 {
+                    println!("da");
+                    kill_proces(argument[2]);
+                }
+            }
             _ => {
                 println!("Command not recognized");
             }
