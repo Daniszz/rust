@@ -57,10 +57,10 @@ fn copiere_director(cale_sursa: &str, cale_destinatie: &str) -> io::Result<()> {
             } else {
                 let destinatie_fisier = destinatie_director.join(entry_path.file_name().unwrap());
 
-                let _ = copiere_fisier(
+                  copiere_fisier(
                     &entry_path.to_string_lossy(),
                     &destinatie_fisier.to_string_lossy(),
-                );
+                ).unwrap_or_default();
             }
         }
     }
@@ -102,7 +102,7 @@ fn copiere_fisier(cale_sursa: &str, cale_destinatie: &str) -> io::Result<()> {
         }
     }
 
-    let sursa_contents = match fs::read(&cale_sursa) {
+    let sursa_contents = match fs::read(cale_sursa) {
         Ok(contents) => contents,
         Err(e) => {
             match e.kind() {
@@ -119,7 +119,7 @@ fn copiere_fisier(cale_sursa: &str, cale_destinatie: &str) -> io::Result<()> {
             return Err(e);
         }
     };
-    match fs::write(&modified_destinatie, &sursa_contents) {
+    match fs::write(&modified_destinatie, sursa_contents) {
         Ok(_) => Ok(()),
         Err(e) => {
             match e.kind() {
@@ -186,12 +186,12 @@ fn mutare(fisiere: &[&str]) -> io::Result<()> {
                 if metadata.is_dir() {
                     println!("da");
 
-                    let _ = copiere_director(fisier, destinatie);
-                    let _ = stergere_director(&[fisier]);
+                     copiere_director(fisier, destinatie).unwrap_or_default();
+                      stergere_director(&[fisier]).unwrap_or_default();
                 } else if metadata.is_file() {
                     println!("Nu");
 
-                    let _ = copiere_fisier(fisier, &destinatie)?;
+                    copiere_fisier(fisier, &destinatie)?;
                     fs::remove_file(fisier)?;
                 }
             }
@@ -262,8 +262,10 @@ fn creare_key(input: &str) -> io::Result<()> {
         }
     };
 
-    let _key = RegKey::predef(hkey).create_subkey(subkey)?;
-
+    if let Err(err) = RegKey::predef(hkey).create_subkey(subkey) {
+        eprintln!("Failed to create subkey: {}", err);
+        
+    }
     println!("Key '{}' created successfully.", input);
 
     Ok(())
@@ -324,7 +326,10 @@ fn stergere_key(input: &str) -> io::Result<()> {
         }
     };
 
-    let _key = winreg::RegKey::predef(hkey).delete_subkey(subkey)?;
+    if let Err(err) = RegKey::predef(hkey).delete_subkey(subkey) {
+        eprintln!("Failed to delete subkey: {}", err);
+        
+    }
     println!("Key '{}' deleted successfully.", input);
 
     Ok(())
@@ -384,38 +389,38 @@ fn main() {
         match argument[0] {
             "cp" => {
                 if argument.len() == 3 {
-                    let _ = copiere_fisier(argument[1], argument[2]);
+                    copiere_fisier(argument[1], argument[2]).unwrap_or_default();
                 } else if argument.len() == 4 && argument[1] == "-r" {
-                    let _ = copiere_director(argument[2], argument[3]);
+                    copiere_director(argument[2], argument[3]).unwrap_or_default();
                 } else {
                     println!("cp: missing file operand.\n Try 'cp --help' for more information");
                 }
             }
             "rm" => {
                 if argument.len() > 1 && argument[1] != "-r" {
-                    let _ = stergere_fisier(&&argument[1..]);
+                    stergere_fisier(&&argument[1..]).unwrap_or_default();
                 } else if argument.len() > 1 && argument[1] == "-r" {
-                    let _ = stergere_director(&&argument[2..]);
+                    stergere_director(&&argument[2..]).unwrap_or_default();
                 } else {
                     println!("rm: missing file operand.\n Try 'rm --help' for more information");
                 }
             }
             "mv" => {
                 if argument.len() > 2 {
-                    let _ = mutare(&&argument[1..]);
+                    mutare(&&argument[1..]).unwrap_or_default();
                 } else {
                     println!("mv: missing file operand.\n Try 'mv --help' for more information");
                 }
             }
             "reg" => {
                 if argument[1] == "query" && argument.len() == 3 {
-                    let _ = listare_key(argument[2]);
+                    listare_key(argument[2]).unwrap_or_default();
                 } else if argument[1] == "add" && argument.len() == 3 {
-                    let _ = creare_key(argument[2]);
+                    creare_key(argument[2]).unwrap_or_default();
                 } else if argument[1] == "add" && argument[3] == "/v" && argument[5] == "/d" {
-                    let _ = modificare_key(argument[2], argument[4], argument[6]);
+                    modificare_key(argument[2], argument[4], argument[6]).unwrap_or_default();
                 } else if argument[1] == "delete" && argument.len() == 3 {
-                    let _ = stergere_key(argument[2]);
+                    stergere_key(argument[2]).unwrap_or_default();
                 } else {
                     println!("Command not recognized");
                 }
