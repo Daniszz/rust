@@ -342,13 +342,34 @@ fn listare_procese() {
 }
 fn kill_proces(proces: &str) {
     let iesire = Command::new("taskkill")
-        .args(&["/F", "/IM", proces])
+        .arg("/F")
+        .arg(match proces.parse::<u32>() {
+            Ok(_) => "/PID",
+            Err(_) => "/IM",
+        })
+        .arg(proces)
         .output()
         .expect("Failed to execute taskkill command");
     if iesire.status.success() {
-        println!("Successfully killed processes with name '{}'", proces);
+        println!(
+            "Successfully killed processes with '{}': {}",
+            if proces.parse::<u32>().is_ok() {
+                "PID"
+            } else {
+                "name"
+            },
+            proces
+        );
     } else {
-        eprintln!("Error killing processes with name '{}'", proces);
+        eprintln!(
+            "Error killing processes with '{}': {}",
+            if proces.parse::<u32>().is_ok() {
+                "PID"
+            } else {
+                "name"
+            },
+            proces
+        );
     }
 }
 fn main() {
@@ -366,6 +387,8 @@ fn main() {
                     let _ = copiere_fisier(argument[1], argument[2]);
                 } else if argument.len() == 4 && argument[1] == "-r" {
                     let _ = copiere_director(argument[2], argument[3]);
+                } else {
+                    println!("cp: missing file operand.\n Try 'cp --help' for more information");
                 }
             }
             "rm" => {
@@ -373,11 +396,15 @@ fn main() {
                     let _ = stergere_fisier(&&argument[1..]);
                 } else if argument.len() > 1 && argument[1] == "-r" {
                     let _ = stergere_director(&&argument[2..]);
+                } else {
+                    println!("rm: missing file operand.\n Try 'rm --help' for more information");
                 }
             }
             "mv" => {
                 if argument.len() > 2 {
                     let _ = mutare(&&argument[1..]);
+                } else {
+                    println!("mv: missing file operand.\n Try 'mv --help' for more information");
                 }
             }
             "reg" => {
@@ -399,13 +426,26 @@ fn main() {
                 }
             }
             "pkill" => {
-                if argument[1] == "-f" && argument.len() == 3 {
+                if argument.len() == 2 {
                     println!("da");
-                    kill_proces(argument[2]);
+                    kill_proces(argument[1]);
+                } else {
+                    println!(
+                        "pkill: missing file operand.\n Try 'pkill --help' for more information"
+                    );
+                }
+            }
+            "kill" => {
+                if argument.len() == 2 {
+                    kill_proces(argument[1]);
+                } else {
+                    println!(
+                        "kill: missing file operand.\n Try 'kill --help' for more information"
+                    );
                 }
             }
             _ => {
-                println!("Command not recognized");
+                println!("syntax error near unexpected token '{}'", argument[0]);
             }
         }
     }
