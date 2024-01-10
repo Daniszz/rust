@@ -56,10 +56,11 @@ fn copiere_director(cale_sursa: &str, cale_destinatie: &str) -> io::Result<()> {
             } else {
                 let destinatie_fisier = destinatie_director.join(entry_path.file_name().unwrap());
 
-                  copiere_fisier(
+                copiere_fisier(
                     &entry_path.to_string_lossy(),
                     &destinatie_fisier.to_string_lossy(),
-                ).unwrap_or_default();
+                )
+                .unwrap_or_default();
             }
         }
     }
@@ -183,11 +184,9 @@ fn mutare(fisiere: &[&str]) -> io::Result<()> {
         match fs::metadata(fisier) {
             Ok(metadata) => {
                 if metadata.is_dir() {
-
-                     copiere_director(fisier, destinatie).unwrap_or_default();
-                      stergere_director(&[fisier]).unwrap_or_default();
+                    copiere_director(fisier, destinatie).unwrap_or_default();
+                    stergere_director(&[fisier]).unwrap_or_default();
                 } else if metadata.is_file() {
-
                     copiere_fisier(fisier, destinatie)?;
                     fs::remove_file(fisier)?;
                 }
@@ -261,7 +260,6 @@ fn creare_key(input: &str) -> io::Result<()> {
 
     if let Err(err) = RegKey::predef(hkey).create_subkey(subkey) {
         eprintln!("Failed to create subkey: {}", err);
-        
     }
     println!("Key '{}' created successfully.", input);
 
@@ -324,7 +322,6 @@ fn stergere_key(input: &str) -> io::Result<()> {
 
     if let Err(err) = RegKey::predef(hkey).delete_subkey(subkey) {
         eprintln!("Failed to delete subkey: {}", err);
-        
     }
     println!("Key '{}' deleted successfully.", input);
 
@@ -372,6 +369,22 @@ fn kill_proces(proces: &str) {
             proces
         );
     }
+}
+fn print_help() {
+    println!("Available commands:");
+    println!("  cp <source> <destination> - Copy a file");
+    println!("  cp -r <source> <destination> - Copy a directory recursively");
+    println!("  rm <file> - Remove a file");
+    println!("  rm -r <directory> - Remove a directory recursively");
+    println!("  mv <source> <destination> - Move a file or directory");
+    println!("  reg query <key> - List subkeys in the registry key");
+    println!("  reg add <key> - Create a new registry key");
+    println!("  reg add <key> /v <value_name> /d <data> - Modify a registry key");
+    println!("  reg delete <key> - Delete a registry key");
+    println!("  ps - List running processes");
+    println!("  pkill <process_name> - Kill a process by name");
+    println!("  kill <process_id> - Kill a process by ID");
+    println!("  help - Display this help message");
 }
 fn main() {
     loop {
@@ -443,6 +456,9 @@ fn main() {
                         "kill: missing file operand.\n Try 'kill --help' for more information"
                     );
                 }
+            }
+            "help" => {
+                print_help();
             }
             _ => {
                 println!("syntax error near unexpected token '{}'", argument[0]);
