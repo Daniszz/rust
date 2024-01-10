@@ -407,7 +407,7 @@ fn main() {
             }
             "mv" => {
                 if argument.len() > 2 {
-                    mutare(&&argument[1..]).unwrap_or_default();
+                    mutare(&argument[1..]).unwrap_or_default();
                 } else {
                     println!("mv: missing file operand.\n Try 'mv --help' for more information");
                 }
