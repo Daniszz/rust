@@ -191,7 +191,7 @@ fn mutare(fisiere: &[&str]) -> io::Result<()> {
                 } else if metadata.is_file() {
                     println!("Nu");
 
-                    copiere_fisier(fisier, &destinatie)?;
+                    copiere_fisier(fisier, destinatie)?;
                     fs::remove_file(fisier)?;
                 }
             }
@@ -292,7 +292,7 @@ fn modificare_key(input: &str, nume: &str, data: &str) -> io::Result<()> {
 
     let key = RegKey::predef(hkey);
     let path = Path::new(subkey);
-    let (key, disp) = key.create_subkey(&path)?;
+    let (key, disp) = key.create_subkey(path)?;
 
     match disp {
         REG_CREATED_NEW_KEY => println!("A new key has been created"),
@@ -398,9 +398,9 @@ fn main() {
             }
             "rm" => {
                 if argument.len() > 1 && argument[1] != "-r" {
-                    stergere_fisier(&&argument[1..]).unwrap_or_default();
+                    stergere_fisier(&argument[1..]).unwrap_or_default();
                 } else if argument.len() > 1 && argument[1] == "-r" {
-                    stergere_director(&&argument[2..]).unwrap_or_default();
+                    stergere_director(&argument[2..]).unwrap_or_default();
                 } else {
                     println!("rm: missing file operand.\n Try 'rm --help' for more information");
                 }
