@@ -48,7 +48,6 @@ fn copiere_director(cale_sursa: &str, cale_destinatie: &str) -> io::Result<()> {
         for entry in fs::read_dir(cale_sursa1)? {
             let entry = entry?;
             let entry_path = entry.path();
-            println!("{}", entry_path.to_string_lossy());
             if entry_path.is_dir() {
                 copiere_director(
                     &entry_path.to_string_lossy(),
@@ -184,12 +183,10 @@ fn mutare(fisiere: &[&str]) -> io::Result<()> {
         match fs::metadata(fisier) {
             Ok(metadata) => {
                 if metadata.is_dir() {
-                    println!("da");
 
                      copiere_director(fisier, destinatie).unwrap_or_default();
                       stergere_director(&[fisier]).unwrap_or_default();
                 } else if metadata.is_file() {
-                    println!("Nu");
 
                     copiere_fisier(fisier, destinatie)?;
                     fs::remove_file(fisier)?;
@@ -306,7 +303,6 @@ fn modificare_key(input: &str, nume: &str, data: &str) -> io::Result<()> {
     Ok(())
 }
 fn stergere_key(input: &str) -> io::Result<()> {
-    println!("Da");
     let (predef, subkey) = input.split_once('\\').unwrap_or((input, ""));
 
     let hkey = match predef.to_uppercase().as_str() {
@@ -432,7 +428,6 @@ fn main() {
             }
             "pkill" => {
                 if argument.len() == 2 {
-                    println!("da");
                     kill_proces(argument[1]);
                 } else {
                     println!(
