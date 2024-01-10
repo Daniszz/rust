@@ -402,7 +402,7 @@ fn main() {
                 } else if argument.len() == 4 && argument[1] == "-r" {
                     copiere_director(argument[2], argument[3]).unwrap_or_default();
                 } else {
-                    println!("cp: missing file operand.\n Try 'cp --help' for more information");
+                    println!("cp: missing file operand.\n Try 'help' for more information");
                 }
             }
             "rm" => {
@@ -411,14 +411,14 @@ fn main() {
                 } else if argument.len() > 1 && argument[1] == "-r" {
                     stergere_director(&argument[2..]).unwrap_or_default();
                 } else {
-                    println!("rm: missing file operand.\n Try 'rm --help' for more information");
+                    println!("rm: missing file operand.\n Try 'help' for more information");
                 }
             }
             "mv" => {
                 if argument.len() > 2 {
                     mutare(&argument[1..]).unwrap_or_default();
                 } else {
-                    println!("mv: missing file operand.\n Try 'mv --help' for more information");
+                    println!("mv: missing file operand.\n Try 'help' for more information");
                 }
             }
             "reg" => {
@@ -444,7 +444,7 @@ fn main() {
                     kill_proces(argument[1]);
                 } else {
                     println!(
-                        "pkill: missing file operand.\n Try 'pkill --help' for more information"
+                        "pkill: missing file operand.\n Try 'help' for more information"
                     );
                 }
             }
@@ -453,7 +453,7 @@ fn main() {
                     kill_proces(argument[1]);
                 } else {
                     println!(
-                        "kill: missing file operand.\n Try 'kill --help' for more information"
+                        "kill: missing file operand.\n Try 'help' for more information"
                     );
                 }
             }
